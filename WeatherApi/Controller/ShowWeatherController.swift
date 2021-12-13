@@ -9,25 +9,19 @@ import UIKit
 
 class ShowWeatherController: UIViewController{
     
-    
-    
     @IBOutlet weak var imgWeather: UIImageView!
-    
-    
     @IBOutlet weak var lblDescription: UILabel!
     @IBOutlet weak var lblSunset: UILabel!
     @IBOutlet weak var lblSunrise: UIStackView!
     @IBOutlet weak var lblTemp: UILabel!
     @IBOutlet weak var lblCity: UILabel!
     @IBOutlet weak var lblSunrise1: UILabel!
-    
-    
     @IBOutlet weak var activitySpin: UIActivityIndicatorView!
+    
     var weathermanager = WeatherManager()
     var cityname = ""
     
     override func viewDidLoad() {
-        
         
         weathermanager.delegate = self
         // Do any additional setup after loading the view.
@@ -49,46 +43,34 @@ class ShowWeatherController: UIViewController{
 extension ShowWeatherController : WeatherManagerDelegate{
     func updatecityWeather(cityweather: CityWeather?) {
         
-        if cityweather !=  nil {
+        guard let safeData = cityweather else {
+            
             DispatchQueue.main.async {
+                self.navigationController?.popViewController(animated: true)
+                Util.showErrorMessage(errorMessage: "Please check City Name", controller: self)
+            }
+            return
+        }
+        
+        DispatchQueue.main.async {
+            
+            self.lblCity.text = safeData.name
+            self.lblDescription.text = safeData.description
+            self.lblSunrise1.text = safeData.sunrise
+            self.lblSunset.text = safeData.sunset
+            self.lblTemp.text = "\( safeData.temperature)"
+            
+            if safeData.temperature < 0 {
                 
-                if let safeData = cityweather{
-                    self.lblCity.text = safeData.name
-                    self.lblDescription.text = safeData.description
-                    self.lblSunrise1.text = String( safeData.sunrise)
-                    self.lblSunset.text = String (safeData.sunset)
-                    self.lblTemp.text = "\( safeData.temperature)"
-                    
-                    if safeData.temperature < 0 {
-                        
-                        self.imgWeather.image = UIImage(systemName: "cloud")
-                        
-                    }
-                    else
-                    {
-                        self.imgWeather.image = UIImage(systemName: "sun.max")
-                    }
-                    
-                }
+                self.imgWeather.image = UIImage(systemName: "cloud")
                 
             }
-        }
-        else
-        {
-            DispatchQueue.main.async {
-                
-                self.navigationController?.popViewController(animated: true)
-                
-                let uialert = UIAlertController(title : "", message: "Please check city name",
-                                                preferredStyle: UIAlertController.Style.alert)
-                uialert.addAction(UIAlertAction(title: "Okay", style: UIAlertAction.Style.default, handler: nil))
-                self.present(uialert, animated: true, completion: nil)
-                
+            else
+            {
+                self.imgWeather.image = UIImage(systemName: "sun.max")
             }
             
         }
-        
-        
         
         
     }

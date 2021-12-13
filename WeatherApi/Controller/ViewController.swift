@@ -21,40 +21,35 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-    
+   
     @IBAction func showWeatherDetails(_ sender: UIButton) {
         
-        
-        if let cityname = lblCityName.text {
-            if cityname !=  "" {
-                let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-                
-                
-                let showWeather = storyBoard.instantiateViewController(withIdentifier: "showWeather") as! ShowWeatherController
-                
-                showWeather.cityname = lblCityName.text!
-                
-                
-                self.navigationController?.pushViewController(showWeather, animated: true)
-            }
-            else
-            {
-                
-                let uialert = UIAlertController(title : "", message: "Please enter city name",
-                                                preferredStyle: UIAlertController.Style.alert)
-                uialert.addAction(UIAlertAction(title: "Okay", style: UIAlertAction.Style.default, handler: nil))
-                self.present(uialert, animated: true, completion: nil)
-            }
-            
+        guard let cityName = lblCityName.text , cityName.count > 0 else {
+            Util.showErrorMessage(errorMessage: "Please Enter City Name", controller: self)
+            return
         }
         
         
+        let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+        
+        
+        let showWeather = storyBoard.instantiateViewController(withIdentifier: "showWeather") as! ShowWeatherController
+        
+        showWeather.cityname = lblCityName.text!
+        
+        
+        self.navigationController?.pushViewController(showWeather, animated: true)
+
+        
     }
+    
+ 
 }
+
+
 
 extension ViewController : UITextViewDelegate{
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
-        
         return true
     }
     
